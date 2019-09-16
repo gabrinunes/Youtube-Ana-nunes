@@ -4,6 +4,7 @@ import androidx.appcompat.app.AppCompatActivity;
 import androidx.appcompat.widget.Toolbar;
 import androidx.recyclerview.widget.LinearLayoutManager;
 import androidx.recyclerview.widget.RecyclerView;
+import androidx.swiperefreshlayout.widget.SwipeRefreshLayout;
 
 import android.content.Intent;
 import android.os.Bundle;
@@ -37,6 +38,7 @@ public class MainActivity extends AppCompatActivity {
 
     //Widgets
     private RecyclerView recyclerVideos;
+    private SwipeRefreshLayout refreshLayout;
     private MaterialSearchView searchView;
 
     private List<Item> videos = new ArrayList<>();
@@ -51,7 +53,15 @@ public class MainActivity extends AppCompatActivity {
         setContentView(R.layout.activity_main);
 
         recyclerVideos= findViewById(R.id.recyclerVideos);
+        refreshLayout = findViewById(R.id.refresh);
         searchView = findViewById(R.id.searchView);
+
+        refreshLayout.setOnRefreshListener(new SwipeRefreshLayout.OnRefreshListener() {
+            @Override
+            public void onRefresh() {
+                recuperarVideos("");
+            }
+        });
 
         //Configurações iniciais Retrofit
           retrofit = RetrofitConfig.getRetrofit();
@@ -116,6 +126,7 @@ public class MainActivity extends AppCompatActivity {
                     resultado = response.body();
                     videos = resultado.items;
                     configurarRecyclerView();
+                    refreshLayout.setRefreshing(false);
 
                 }
             }
